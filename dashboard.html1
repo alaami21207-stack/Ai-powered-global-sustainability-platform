@@ -1,0 +1,581 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSphere AI | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f0f7f0;
+            color: #183b2a;
+        }
+
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: #123d2a;
+            color: white;
+            padding: 25px 16px;
+            box-sizing: border-box;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 35px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #e0f2e5;
+            text-decoration: none;
+            padding: 13px 12px;
+            margin: 7px 0;
+            border-radius: 9px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #28784b;
+            color: white;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            padding: 28px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .topbar h1 {
+            margin: 0 0 8px;
+        }
+
+        .theme-btn {
+            padding: 10px 14px;
+            border: 0;
+            border-radius: 9px;
+            background: #d9eddf;
+            cursor: pointer;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            min-height: 220px;
+            padding: 30px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            background:
+                linear-gradient(90deg, rgba(9, 55, 33, .94),
+                rgba(9, 55, 33, .42)),
+                url("https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1400&q=85")
+                center/cover;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .hero-text {
+            max-width: 530px;
+        }
+
+        .hero h2 {
+            font-size: clamp(27px, 4vw, 40px);
+            margin: 0 0 12px;
+        }
+
+        .hero p {
+            line-height: 1.7;
+        }
+
+        .hero a {
+            display: inline-block;
+            background: #b8f36b;
+            color: #173d24;
+            padding: 12px 18px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card,
+        .chart-card,
+        .tips-card {
+            background: white;
+            border: 1px solid #e0ebe1;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 5px 18px rgba(25, 70, 40, .05);
+            min-width: 0;
+        }
+
+        .stat-card span {
+            color: #587361;
+            font-size: 14px;
+        }
+
+        .stat-card h2 {
+            margin: 12px 0 5px;
+            color: #17643b;
+            overflow-wrap: anywhere;
+        }
+
+        .stat-card p {
+            font-size: 13px;
+            color: #64806c;
+        }
+
+        .section-title {
+            margin: 26px 0 15px;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .chart-card canvas {
+            width: 100% !important;
+            max-height: 300px;
+        }
+
+        .tips-card {
+            margin-top: 20px;
+        }
+
+        .tip {
+            background: #edf8ee;
+            padding: 14px;
+            border-radius: 10px;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        .dashboard-footer {
+            color: #6b8270;
+            font-size: 13px;
+            margin-top: 25px;
+        }
+
+        body.dark-mode {
+            background: #10231a;
+            color: #e6f5e9;
+        }
+
+        body.dark-mode .stat-card,
+        body.dark-mode .chart-card,
+        body.dark-mode .tips-card {
+            background: #1b3527;
+            border-color: #345542;
+            color: #e6f5e9;
+        }
+
+        body.dark-mode .stat-card span,
+        body.dark-mode .stat-card p {
+            color: #c0d8c6;
+        }
+
+        body.dark-mode .tip {
+            background: #294734;
+        }
+
+        body.dark-mode .theme-btn {
+            background: #294734;
+            color: white;
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 175px;
+                padding: 20px 10px;
+            }
+
+            .main-content {
+                padding: 18px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 560px) {
+            .dashboard-layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 12px;
+            }
+
+            .brand {
+                margin: 5px 5px 12px;
+            }
+
+            .sidebar nav {
+                display: flex;
+                overflow-x: auto;
+                gap: 5px;
+            }
+
+            .sidebar a {
+                white-space: nowrap;
+                margin: 0;
+                padding: 10px;
+            }
+
+            .main-content {
+                padding: 14px;
+            }
+
+            .stats,
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+        <div class="brand">🌍 EcoSphere AI</div>
+        <nav>
+            <a class="active" href="/dashboard">🏠 Dashboard</a>
+            <a href="/">🤖 AI Solver</a>
+            <a href="/#calculator">Open Carbon Calculator</a>
+            <a href="/#reportBtn">📄 Open Sustainability Report</a>
+            <a href="#history">📈 Historical Data</a>
+            <a href="#tips">🌱 Green Tips</a>
+            <a href="#settings">⚙️ Settings</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <h1>🌿 Sustainability Dashboard</h1>
+                <p>Small steps today, a greener planet tomorrow.</p>
+            </div>
+            <button class="theme-btn" id="themeToggle"
+                    onclick="toggleTheme()">🌙 Dark Mode</button>
+        </header>
+
+        <section class="hero">
+            <div class="hero-text">
+                <h2>Let's Make Earth Greener 🌎</h2>
+                <p>
+                    Understand your environmental impact, discover
+                    sustainable choices, and take a step toward a
+                    cleaner future with EcoSphere AI.
+                </p>
+            </div>
+        </section>
+
+        <section class="stats" id="history">
+            <article class="stat-card">
+                <span>⚡ Electricity Usage</span>
+                <h2 id="dashUnits">-- kWh</h2>
+                <p>Latest calculated value</p>
+            </article>
+
+            <article class="stat-card">
+                <span>🌍 Carbon Emissions</span>
+                <h2 id="dashCarbon">-- kg</h2>
+                <p>Estimated electricity emissions</p>
+            </article>
+
+            <article class="stat-card">
+                <span>🌱 Eco Score</span>
+                <h2 id="ecoScore">-- / 100</h2>
+                <p id="ecoScoreNote">Calculate your footprint first</p>
+            </article>
+        </section>
+        
+<section class="section" id="ai-solver">
+    <p class="eyebrow">YOUR AI ASSISTANT</p>
+    <h2>AI Sustainability Solver</h2>
+    <p>Describe an environmental problem to explore possible solutions.</p>
+
+    <div class="panel">
+        <label for="problem">What problem do you want to solve?</label>
+        <textarea id="problem"
+            placeholder="Example: Our college wastes a lot of electricity..."></textarea>
+
+        <label for="category">Select a category</label>
+        <select id="category">
+            <option>Energy</option>
+            <option>Water</option>
+            <option>Waste Management</option>
+            <option>Carbon Emissions</option>
+            <option>Biodiversity</option>
+        </select>
+
+        <button class="primary-btn" id="solveBtn" onclick="solveProblem()">
+            Generate Solutions ✨
+        </button>
+
+        <div id="solution" class="result" aria-live="polite"></div>
+    </div>
+</section>
+    
+<section class="section" id="calculator">
+    <p class="eyebrow">MEASURE YOUR IMPACT</p>
+    <h2>Carbon Footprint Calculator</h2>
+    <p>Estimate emissions from electricity usage.</p>
+
+    <div class="panel">
+        <label for="units">Monthly electricity consumption (kWh)</label>
+        <input id="units" type="number" min="0" placeholder="Example: 150">
+
+        <button class="primary-btn" onclick="calculateCarbon()">
+            Calculate Footprint
+        </button>
+
+        <div id="carbonResult" class="result" aria-live="polite"></div>
+        <p class="note">
+            Illustrative estimate using 0.7 kg CO₂ per kWh.
+        </p>
+    </div>
+</section>
+
+        <h2 class="section-title">📊 Your Environmental Impact</h2>
+
+        <section class="chart-grid">
+            <article class="chart-card">
+                <h3>Carbon Emissions Comparison</h3>
+                <canvas id="dashBarChart"></canvas>
+            </article>
+
+            <article class="chart-card">
+                <h3>20% Reduction Goal</h3>
+                <canvas id="dashDoughnutChart"></canvas>
+            </article>
+        </section>
+
+        <section class="tips-card" id="tips">
+            <h2>🌱 Green Tips for You</h2>
+            <div class="tip">💡 Switch off lights and appliances when not in use.</div>
+            <div class="tip">☀️ Use natural daylight whenever possible.</div>
+            <div class="tip">🔌 Unplug chargers when they are not needed.</div>
+            <div class="tip">🌳 Choose reusable products and reduce waste.</div>
+        </section>
+<section class="tips-card" id="settings">
+    <h2>📄 Sustainability Summary</h2>
+
+    <p id="dashSummary">
+        Your report will appear here after calculating electricity usage.
+    </p>
+
+    <button onclick="generateDashboardReport()">
+    📄 Generate Sustainability Report ✨
+</button>
+    <div id="dashboardReportOutput"></div>
+</section>
+        
+        
+        <p class="dashboard-footer">
+            EcoSphere AI · Sustainable choices for a better tomorrow 🌍
+        </p>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let dashBarChart = null;
+    let dashDoughnutChart = null;
+
+    function toggleTheme() {
+        document.body.classList.toggle("dark-mode");
+        const dark = document.body.classList.contains("dark-mode");
+        document.getElementById("themeToggle").textContent =
+            dark ? "☀️ Light Mode" : "🌙 Dark Mode";
+    }
+
+    function loadDashboard() {
+        const units = Number(localStorage.getItem("ecoUnits"));
+        const emissions = Number(localStorage.getItem("ecoEmissions"));
+
+        if (!units || !emissions) return;
+
+        document.getElementById("dashUnits").textContent = units + " kWh";
+        document.getElementById("dashCarbon").textContent =
+            emissions.toLocaleString(undefined, {
+                maximumFractionDigits: 2
+            }) + " kg";
+
+        const score = Math.max(0, Math.min(100,
+            Math.round(100 - (emissions / (units * 1.5)) * 100)
+        ));
+        document.getElementById("ecoScore").textContent = score + " / 100";
+        document.getElementById("ecoScoreNote").textContent =
+            "Illustrative score based on your electricity estimate";
+
+        document.getElementById("dashSummary").textContent =
+            "Your estimated electricity use is " + units +
+            " kWh, producing approximately " +
+            emissions.toLocaleString(undefined, {
+                maximumFractionDigits: 2
+            }) + " kg CO₂ using the project's 0.7 estimate.";
+
+        if (dashBarChart) dashBarChart.destroy();
+        if (dashDoughnutChart) dashDoughnutChart.destroy();
+
+        dashBarChart = new Chart(document.getElementById("dashBarChart"), {
+            type: "bar",
+            data: {
+                labels: ["Current", "20% Reduction Target"],
+                datasets: [{
+                    data: [emissions, emissions * 0.8],
+                    backgroundColor: ["#16a34a", "#86c75a"]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        dashDoughnutChart = new Chart(
+            document.getElementById("dashDoughnutChart"), {
+                type: "doughnut",
+                data: {
+                    labels: ["Target emissions", "Reduction needed"],
+                    datasets: [{
+                        data: [emissions * 0.8, emissions * 0.2],
+                        backgroundColor: ["#16a34a", "#f59e0b"]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: "bottom" } }
+                }
+            }
+        );
+    }
+async function generateDashboardReport() {
+    const savedUnits = localStorage.getItem("ecoUnits");
+    const units = savedUnits === null ? 0 : Number(savedUnits);
+
+    const output = document.getElementById("dashboardReportOutput");
+    const button = document.querySelector(
+        'button[onclick="generateDashboardReport()"]'
+    );
+
+    if (!output) {
+        alert("Report output area is missing.");
+        return;
+    }
+
+    if (!Number.isFinite(units) || units <= 0) {
+        output.textContent =
+            "Please enter your electricity usage and click Calculate first.";
+        return;
+    }
+
+    if (button) {
+        button.disabled = true;
+        button.textContent = "Generating AI Report... 🌱";
+    }
+
+    output.textContent =
+        "EcoSphere AI is preparing your personalized report...";
+
+    try {
+        const response = await fetch("/api/report", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ units })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || "Failed to generate the report."
+            );
+        }
+
+        const heading = document.createElement("h3");
+        heading.textContent = "🌍 Your Sustainability Report";
+
+        const usage = document.createElement("p");
+        usage.textContent = `Electricity Usage: ${data.units} kWh`;
+
+        const carbon = document.createElement("p");
+        carbon.textContent =
+            `Estimated Carbon Emissions: ${data.emissions} kg CO₂`;
+
+        const reduction = document.createElement("p");
+        reduction.textContent =
+            `Target Emissions (20% Reduction): ${data.target} kg CO₂`;
+
+        const recommendationHeading = document.createElement("h4");
+        recommendationHeading.textContent = "🤖 AI Recommendations";
+
+        const recommendations = document.createElement("p");
+        recommendations.style.whiteSpace = "pre-wrap";
+        recommendations.textContent =
+            data.recommendations || "No recommendations were returned.";
+
+        output.replaceChildren(
+            heading,
+            usage,
+            carbon,
+            reduction,
+            recommendationHeading,
+            recommendations
+        );
+
+    } catch (error) {
+        console.error("AI report error:", error);
+        output.textContent = "Report error: " + error.message;
+
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.textContent = "📄 Generate Sustainability Report ✨";
+        }
+    }
+}
+loadDashboard();
+</script>
+
+<script src="/script.js"></script>
+</body>
+</html>
