@@ -10,12 +10,17 @@ app = Flask(__name__, static_folder=None)
 
 api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key) if api_key else None
+from flask import Flask, send_from_directory
+import os
 
+app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return send_from_directory(".", "index.html")
-
+    return send_from_directory(
+        os.path.dirname(os.path.abspath(__file__)),
+        "index.html"
+    )
 
 @app.route("/dashboard")
 def dashboard():
